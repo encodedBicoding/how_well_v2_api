@@ -21,7 +21,7 @@ class PlaqueController{
         name, userId: user.id, UserId: user.id,
       })
 
-      const plaque_url = `http://localhost:4000/api/v1/${user.userName}/plaque/${new_plaque.id}`;
+      const plaque_url = `https://api-hwdykm.herokuapp.com/api/v1${user.userName}/plaque/${new_plaque.id}`;
 
       await Plaques.update({
         url: plaque_url

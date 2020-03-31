@@ -4,7 +4,7 @@
   "description": "An app which helps people discover what other think of them based on some questions",
   "main": "index.js",
   "scripts": {
-    "start:dev": "export NODE_ENV=development && pm2-dev start ./app/server.js",
+    "start:dev": "export NODE_ENV=develoment && pm2-dev start ./app/server.js",
     "build": "babel -d ./build ./app",
     "prestart": "npm run migrate:undo && npm run migrate",
     "migrate": "npx sequelize-cli db:migrate",

@@ -7,6 +7,8 @@
     "start:dev": "export NODE_ENV=development && pm2-dev start ./server/server.js",
     "build": "babel -d ./build ./server",
     "prestart": "npm run migrate:undo && npm run migrate",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
     "start": "export NODE_ENV=production && pm2 start ./build/server.js -i max",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

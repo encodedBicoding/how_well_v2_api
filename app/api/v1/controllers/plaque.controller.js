@@ -139,7 +139,7 @@ class PlaqueController{
       if (!plaque) {
         return res.status(404).json({
           status: 404,
-          error: 'Plaque does not exist'
+          error: 'Plaque does not exist',
         })
       }
       const questions = await plaque.getQuestions();

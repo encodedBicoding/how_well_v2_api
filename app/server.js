@@ -1,5 +1,6 @@
 require('babel-polyfill');
 const express = require('express');
+const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const { config } = require('dotenv');
@@ -17,11 +18,24 @@ app.enable('trust proxy');
 
 app.use(helmet());
 
+const accepted_urls = [
+  'http://localhost:8080',
+];
+const corsOption = {
+  origin: (origin, cb) => {
+    if (accepted_urls.indexOf(origin) !== -1) {
+      return cb(null, true);
+    }
+    return cb(null, false);
+  },
+};
+
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 const isProduction = app.get('env') === 'production';
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb'}))
+app.use(cors(corsOption));
 if (isProduction) app.use(enforce.HTTPS());
 if (!isProduction) {
   app.use(errorHandler({

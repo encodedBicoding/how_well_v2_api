@@ -4,8 +4,15 @@ const PlaqueController = require('../controllers/plaque.controller');
 const checkSession = require('../middlewares/checkSession');
 
 
-const { register, login } = UserController;
-const { create, addQuestion, addResponse, getPlaque, getResponses } = PlaqueController
+const { register, login, getProfile } = UserController;
+const { 
+  create,
+  addQuestion,
+  addResponse,
+  getPlaque,
+  getResponses,
+  getAllPlaques,
+} = PlaqueController
 
 const route = express();
 
@@ -16,6 +23,7 @@ route.get('/', (req, res) => res.status(200).json({
   app_name: 'How well do you know me',
 }));
 // validate inputs
+route.get('/user/profile', checkSession, getProfile)
 route.post('/register', register);
 route.post(
   '/login',
@@ -46,6 +54,12 @@ route.post(
 route.post(
   '/new/response/:questionId',
   addResponse
+)
+
+route.get(
+  '/all/plaque',
+  checkSession,
+  getAllPlaques
 )
 
 

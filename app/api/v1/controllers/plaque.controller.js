@@ -135,22 +135,54 @@ class PlaqueController{
   static async getPlaque(req, res) {
     const { userName, plaqueId } = req.params
     return Promise.try(async ()=> {
-      const plaque = await Plaques.findByPk(plaqueId);
+      const plaque = await Plaques.findByPk(plaqueId, {
+        attributes:{
+          exclude: [
+            'url',
+            'questionLength',
+            'createdAt',
+            'updatedAt',
+            'UserId',
+            'userId']
+        },
+        include:[
+          {
+            model: Questions,
+            as: 'Questions',
+            attributes: {
+              exclude: [
+                'plaqueId',
+                'userId',
+                'UserId',
+                'createdAt',
+                'updatedAt',
+                'PlaqueId']
+            },
+            include: [{
+              model: Responses,
+              as: 'Responses',
+              attributes: {
+                exclude: [
+                  'questionId',
+                  'QuestionId',
+                  'createdAt',
+                  'updatedAt'
+                ]
+              }
+            }]
+          }
+        ],
+      });
       if (!plaque) {
         return res.status(404).json({
           status: 404,
           error: 'Plaque does not exist',
         })
       }
-      const questions = await plaque.getQuestions();
       return res.status(200).json({
         status: 200,
         message: 'Plaque retrieved successfully',
-        data: {
-          plaque,
-          questions,
-          userName
-        }
+        data: plaque,
       })
     })
     .catch((error) => {
@@ -164,8 +196,6 @@ class PlaqueController{
   static async getResponses(req, res) {
     const { questionId } = req.params;
     const { user } = req.session;
-    console.log(user.__proto__);
-    console.log(await user.hasQuestion(questionId));
     return Promise.try(async ()=> {
       const question = await Questions.findByPk(questionId);
       if (!question) {
@@ -186,6 +216,64 @@ class PlaqueController{
         status: 200,
         message: 'Responses retrieved successfully',
         data: responses
+      })
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      });
+    })
+  }
+
+  static async getAllPlaques(req, res) {
+    const { user } = req.session;
+    return Promise.try(async () => {
+      const plaqueData = await Plaques.findAll({
+        where: {
+          UserId: user.id,
+        },
+        attributes:{
+          exclude: [
+            'url',
+            'questionLength',
+            'createdAt',
+            'updatedAt',
+            'UserId',
+            'userId']
+        },
+        include:[
+          {
+            model: Questions,
+            as: 'Questions',
+            attributes: {
+              exclude: [
+                'plaqueId',
+                'userId',
+                'UserId',
+                'createdAt',
+                'updatedAt',
+                'PlaqueId']
+            },
+            include: [{
+              model: Responses,
+              as: 'Responses',
+              attributes: {
+                exclude: [
+                  'questionId',
+                  'QuestionId',
+                  'createdAt',
+                  'updatedAt'
+                ]
+              }
+            }]
+          }
+        ],
+      });
+      return res.status(200).json({
+        status: 200,
+        message: 'All plaques retrieved',
+        data: plaqueData
       })
     })
     .catch((error) => {

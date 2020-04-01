@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const jwt = require('../helpers/jwt');
-const {Users}  = require('../../../models');
+const { Users }  = require('../../../models');
 
 class UserController {
   static async register(req, res) {
@@ -66,6 +66,31 @@ class UserController {
     })
     .catch((error) => {
       console.log(error)
+      return res.status(500).json({
+        status: 500,
+        error,
+      })
+    })
+  }
+  static async getProfile(req, res) {
+    const { user } = req.session;
+    return Promise.try(async () => {
+      const USER = await Users.findByPk(user.id, {
+        attributes: {
+          exclude: [
+            'createdAt', 
+            'updatedAt', 
+            'password'
+          ]
+        }
+      });
+      return res.status(200).json({
+        status: 200,
+        message: 'Profile retrieved successfully',
+        data: USER,
+      })
+    })
+    .catch((error) => {
       return res.status(500).json({
         status: 500,
         error,

@@ -1,6 +1,5 @@
 require('babel-polyfill');
 const express = require('express');
-const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const { config } = require('dotenv');
@@ -23,7 +22,6 @@ const isProduction = app.get('env') === 'production';
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb'}))
-app.use(cors());
 if (isProduction) app.use(enforce.HTTPS());
 if (!isProduction) {
   app.use(errorHandler({

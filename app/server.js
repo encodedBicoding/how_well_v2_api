@@ -20,6 +20,7 @@ app.use(helmet());
 
 const accepted_urls = [
   'http://localhost:8080',
+  'https://5e85fbbb8c44d66000f4f7f9--naughty-nobel-33df29.netlify.com'
 ];
 const corsOption = {
   origin: (origin, cb) => {

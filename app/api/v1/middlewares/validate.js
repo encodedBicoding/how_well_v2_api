@@ -3,9 +3,9 @@ const validateRegister =   [
   [
     check('userName')
     .isAlpha()
-    .withMessage('Must only contain alphabetical characters')
+    .withMessage('Username must only contain alphabetical characters')
     .isLength({ min: 2 })
-    .withMessage('Must be at least 2 chars long'),
+    .withMessage('Username must be atleast 2 characters long'),
   check('email')
     .isEmail()
     .withMessage('Please add a valid email'),
@@ -26,9 +26,9 @@ const validateLogin = [
   [
     check('userName')
     .isAlpha()
-    .withMessage('Must only contain alphabetical characters')
+    .withMessage('Username must only contain alphabetical characters')
     .isLength({ min: 2 })
-    .withMessage('Must be at least 2 chars long'),
+    .withMessage('Username must be atleast 2 characters long'),
   check('password')
     .isLength({min: 8})
     .withMessage('Password must be atleast 8 characters long')

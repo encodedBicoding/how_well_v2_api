@@ -6,15 +6,12 @@ class UserController {
   static async register(req, res) {
     let { userName, email, password } = req.body;
     userName = userName.toLowerCase();
-    console.log(req.body);
     return Promise.try(async () => {
       const isFound = await Users.findOne({
         where: {
           email
         }
       })
-      console.log(isFound);
-
       if(isFound) {
         return res.status(401).json({
           status: 401,

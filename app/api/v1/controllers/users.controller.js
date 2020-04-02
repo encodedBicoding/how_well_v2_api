@@ -33,7 +33,8 @@ class UserController {
     }).catch((error)=> {
       return res.status(500).json({
         status: 500,
-        error,
+        error: 'error occured from creating user',
+        errorObj: error,
       })
     })
   }

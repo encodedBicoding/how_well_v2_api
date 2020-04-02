@@ -4,7 +4,6 @@ module.exports = {
     script: './build/server.js',
 
     // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
-    args: 'one two',
     instances: 'max',
     autorestart: true,
     watch: false,
@@ -13,6 +12,7 @@ module.exports = {
       NODE_ENV: 'development'
     },
     env_production: {
+      PORT: 80,
       NODE_ENV: 'production'
     }
   }],

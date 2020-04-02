@@ -11,6 +11,9 @@ module.exports = {
       question: {
         type: Sequelize.STRING
       },
+      answer: {
+        type: Sequelize.STRING
+      },
       PlaqueId: {
         type: Sequelize.INTEGER
       },

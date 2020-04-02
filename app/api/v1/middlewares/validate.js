@@ -70,10 +70,43 @@ const validateQuestionId = [
     return next();
   } 
 ]
+const validateAddQuestion = [
+  [
+    check('question')
+      .notEmpty()
+      .withMessage('Question cannot be empty'),
+    check('answer')
+      .notEmpty()
+      .withMessage('Answer cannot be empty')
+  ],
+  (req, res, next)=> {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+    return next();
+  } 
+]
+const validateCreatePlaque = [
+  [
+    check('name')
+      .notEmpty()
+      .withMessage('Plaque cannot be empty'),
+  ],
+  (req, res, next)=> {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+    return next();
+  } 
+]
 
 module.exports = {
   validateRegister,
   validateLogin,
   validatePlaqueId,
-  validateQuestionId
+  validateQuestionId,
+  validateAddQuestion,
+  validateCreatePlaque
 };

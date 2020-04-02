@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    answer: {
+      type: DataTypes.STRING,
+      allowNull: false, 
+    },
     plaqueId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -27,8 +31,8 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
     })
     Questions.hasMany(models.Responses, {
-      as: 'Responses',
       onDelete: 'CASCADE',
+      as: 'Responses',
     })
   };
   return Questions;

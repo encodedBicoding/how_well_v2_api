@@ -24,11 +24,11 @@ module.exports = (sequelize, DataTypes) => {
   Plaques.associate = function(models) {
     // associations can be defined here
     Plaques.belongsTo(models.Users, {
-      foreignKey: 'userId'
+      foreignKey: 'userId',
     });
     Plaques.hasMany(models.Questions, {
+      onDelete: 'CASCADE',
       as: 'Questions',
-      onDelete: 'CASCADE'
     })
   };
   return Plaques;

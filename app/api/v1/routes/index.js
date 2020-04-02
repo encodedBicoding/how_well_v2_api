@@ -7,6 +7,8 @@ const {
   validateLogin,
   validatePlaqueId,
   validateQuestionId,
+  validateAddQuestion,
+  validateCreatePlaque
 } = require('../middlewares/validate');
 
 
@@ -18,6 +20,7 @@ const {
   getPlaque,
   getResponses,
   getAllPlaques,
+  deleteAPlaque,
 } = PlaqueController
 
 const route = express();
@@ -42,8 +45,22 @@ route.post(
 );
 route.post(
   '/new/plaque/',
+  validateCreatePlaque,
   checkSession,
   create,
+)
+route.delete(
+  '/delete/plaque/:plaqueId',
+  validatePlaqueId,
+  checkSession,
+  deleteAPlaque,
+)
+route.post(
+  '/new/question/:plaqueId',
+  validatePlaqueId,
+  validateAddQuestion,
+  checkSession,
+  addQuestion
 )
 
 route.get(
@@ -59,12 +76,7 @@ route.get(
   getResponses
 )
 
-route.post(
-  '/new/question/:plaqueId',
-  validatePlaqueId,
-  checkSession,
-  addQuestion
-)
+
 route.post(
   '/new/response/:questionId',
   validateQuestionId,

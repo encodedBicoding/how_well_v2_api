@@ -77,7 +77,7 @@ class PlaqueController{
   static async addQuestion(req, res) {
     const { user } = req.session;
     const { plaqueId } = req.params;
-    let { question } = req.body;
+    let { question, answer } = req.body;
 
     return Promise.try(async ()=> {
       const plaque = await Plaques.findByPk(plaqueId);
@@ -98,6 +98,7 @@ class PlaqueController{
       question = question.trim();
       const new_questions = await Questions.create({
         question,
+        answer,
         plaqueId: plaque.id,
         userId: user.id,
         PlaqueId: plaque.id,
@@ -326,6 +327,73 @@ class PlaqueController{
       return res.status(200).json({
         status: 200,
         message: 'All plaques retrieved',
+        data: plaqueData
+      })
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      });
+    })
+  }
+  static async deleteAPlaque(req, res) {
+    const { plaqueId } = req.params;
+    const { user } = req.session;
+    return Promise.try( async () => {
+      const isFound = await Plaques.findByPk(plaqueId);
+      if (!isFound) return res.status(404).json({
+        status: 404,
+        error: 'Plaque not found'
+      })
+      console.log(isFound.__proto__);
+      await isFound.removeQuestion();
+      await isFound.destroy();
+
+      const plaqueData = await Plaques.findAll({
+        where: {
+          UserId: user.id,
+        },
+        attributes:{
+          exclude: [
+            'url',
+            'questionLength',
+            'createdAt',
+            'updatedAt',
+            'UserId',
+            'userId']
+        },
+        include:[
+          {
+            model: Questions,
+            as: 'Questions',
+            attributes: {
+              exclude: [
+                'plaqueId',
+                'userId',
+                'UserId',
+                'createdAt',
+                'updatedAt',
+                'PlaqueId']
+            },
+            include: [{
+              model: Responses,
+              as: 'Responses',
+              attributes: {
+                exclude: [
+                  'questionId',
+                  'QuestionId',
+                  'createdAt',
+                  'updatedAt'
+                ]
+              }
+            }]
+          }
+        ],
+      });
+      return res.status(200).json({
+        status: 200,
+        message: 'Plaque deleted successfully',
         data: plaqueData
       })
     })

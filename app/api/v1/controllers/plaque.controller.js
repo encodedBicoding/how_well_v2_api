@@ -346,8 +346,6 @@ class PlaqueController{
         status: 404,
         error: 'Plaque not found'
       })
-      console.log(isFound.__proto__);
-      await isFound.removeQuestion();
       await isFound.destroy();
 
       const plaqueData = await Plaques.findAll({

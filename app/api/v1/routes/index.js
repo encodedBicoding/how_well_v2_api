@@ -2,6 +2,12 @@ const express = require('express');
 const UserController = require('../controllers/users.controller');
 const PlaqueController = require('../controllers/plaque.controller');
 const checkSession = require('../middlewares/checkSession');
+const {
+  validateRegister,
+  validateLogin,
+  validatePlaqueId,
+  validateQuestionId,
+} = require('../middlewares/validate');
 
 
 const { register, login, getProfile } = UserController;
@@ -24,9 +30,14 @@ route.get('/', (req, res) => res.status(200).json({
 }));
 // validate inputs
 route.get('/user/profile', checkSession, getProfile)
-route.post('/register', register);
+route.post(
+  '/register',
+  validateRegister,
+  register
+);
 route.post(
   '/login',
+  validateLogin,
   login
 );
 route.post(
@@ -36,23 +47,27 @@ route.post(
 )
 
 route.get(
-  '/:userName/plaque/:plaqueId',
+  '/plaque/:plaqueId',
+  validatePlaqueId,
   getPlaque,
 )
 
 route.get(
   '/plaque/:questionId',
+  validateQuestionId,
   checkSession,
   getResponses
 )
 
 route.post(
   '/new/question/:plaqueId',
+  validatePlaqueId,
   checkSession,
   addQuestion
 )
 route.post(
   '/new/response/:questionId',
+  validateQuestionId,
   addResponse
 )
 

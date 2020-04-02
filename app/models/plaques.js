@@ -14,11 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
-    url: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'no-url'
-    },
 
   }, 
   {

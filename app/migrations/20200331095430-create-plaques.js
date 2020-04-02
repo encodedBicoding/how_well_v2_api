@@ -20,9 +20,6 @@ module.exports = {
       questionLength: {
         type: Sequelize.INTEGER
       },
-      url: {
-        type: Sequelize.STRING,
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

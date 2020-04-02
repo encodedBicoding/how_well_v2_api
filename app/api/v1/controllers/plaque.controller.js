@@ -21,21 +21,50 @@ class PlaqueController{
         name, userId: user.id, UserId: user.id,
       })
 
-      const plaque_url = `https://api-hwdykm.herokuapp.com/api/v1${user.userName}/plaque/${new_plaque.id}`;
-
-      await Plaques.update({
-        url: plaque_url
-      }, {
-        where: {
-          id: new_plaque.id
-        }
+      const plaque_data = await Plaques.findByPk(new_plaque.id, {
+        attributes:{
+          exclude: [
+            'url',
+            'questionLength',
+            'createdAt',
+            'updatedAt',
+            'UserId',
+            'userId']
+        },
+        include:[
+          {
+            model: Questions,
+            as: 'Questions',
+            attributes: {
+              exclude: [
+                'plaqueId',
+                'userId',
+                'UserId',
+                'createdAt',
+                'updatedAt',
+                'PlaqueId']
+            },
+            include: [{
+              model: Responses,
+              as: 'Responses',
+              attributes: {
+                exclude: [
+                  'questionId',
+                  'QuestionId',
+                  'createdAt',
+                  'updatedAt'
+                ]
+              }
+            }]
+          }
+        ],
       })
 
       return res.status(201).json({
         status: 201,
         message: 'Plaque created successfully',
-        data: new_plaque
-      })
+        data: plaque_data,
+      });
 
     }).catch((error) => {
       return res.status(500).json({
@@ -82,10 +111,34 @@ class PlaqueController{
           id: plaqueId
         }
       })
+      const question_data = await Questions.findByPk(new_questions.id, {
+        attributes: {
+          exclude: [
+            'plaqueId',
+            'userId',
+            'UserId',
+            'createdAt',
+            'updatedAt',
+            'PlaqueId',
+          ]
+        },
+        include: [{
+          model: Responses,
+          as: 'Responses',
+          attributes: {
+            exclude: [
+              'questionId',
+              'QuestionId',
+              'createdAt',
+              'updatedAt'
+            ]
+          }
+        }]
+      })
       return res.status(201).json({
         status: 201,
         message: 'Question added successfully',
-        data: new_questions,
+        data: question_data,
       })
     })
     .catch((error) => {
@@ -110,7 +163,7 @@ class PlaqueController{
       }
       response = response.trim();
       let noOfResponses = await question.countResponses();
-      let author = `Annonymous user ${Number(noOfResponses + 1)}`;
+      let author = `Anonymous user ${Number(noOfResponses + 1)}`;
       const new_response = await Responses.create({
         response,
         questionId,
@@ -133,7 +186,7 @@ class PlaqueController{
   }
 
   static async getPlaque(req, res) {
-    const { userName, plaqueId } = req.params
+    const { plaqueId } = req.params
     return Promise.try(async ()=> {
       const plaque = await Plaques.findByPk(plaqueId, {
         attributes:{

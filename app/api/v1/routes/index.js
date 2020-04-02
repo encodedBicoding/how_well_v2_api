@@ -36,7 +36,7 @@ route.post(
 )
 
 route.get(
-  '/:userName/plaque/:plaqueId',
+  '/plaque/:plaqueId',
   getPlaque,
 )
 

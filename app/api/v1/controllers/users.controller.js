@@ -4,7 +4,9 @@ const { Users }  = require('../../../models');
 
 class UserController {
   static async register(req, res) {
-    const { userName, email, password } = req.body;
+    let { userName, email, password } = req.body;
+    userName = userName.toLowerCase();
+    email = email.toLowerCase();
     return Promise.try(async () => {
       const isFound = await Users.findOne({
         where: {
@@ -36,7 +38,8 @@ class UserController {
     })
   }
   static async login(req, res) {
-    const { userName, password} = req.body;
+    let { userName, password} = req.body;
+    userName = userName.toLowerCase();
     return Promise.try(async ()=> {
       const user = await Users.findOne({
         where: {

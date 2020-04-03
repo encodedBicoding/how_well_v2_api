@@ -20,7 +20,8 @@ app.use(helmet());
 
 const accepted_urls = [
   'http://localhost:8080',
-  'https://naughty-nobel-33df29.netlify.com'
+  'https://naughty-nobel-33df29.netlify.com',
+  'https://hwdykm.xyz'
 ];
 const corsOption = {
   origin: (origin, cb) => {

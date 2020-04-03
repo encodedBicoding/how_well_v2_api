@@ -8,7 +8,7 @@
     "build": "babel -d ./build ./app",
     "prestart": "export NODE_ENV=production && npm run migrate:undo && npm run migrate",
     "migrate": "npx sequelize-cli db:migrate",
-    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo:all",
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

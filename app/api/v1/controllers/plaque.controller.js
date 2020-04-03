@@ -1,4 +1,7 @@
 const { Plaques, Questions, Responses } = require('../../../models');
+const Sequelize = require('sequelize');
+
+const { Op } = Sequelize;
 
 class PlaqueController{
   static async create(req, res) {
@@ -7,7 +10,7 @@ class PlaqueController{
     return Promise.try(async () => {
       const isPlaqueAvailable = await Plaques.findOne({
         where: {
-          name,
+          [Op.and]: { name, UserId: user.id }
         }
       })
       if (isPlaqueAvailable) {

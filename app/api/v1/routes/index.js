@@ -12,7 +12,7 @@ const {
 } = require('../middlewares/validate');
 
 
-const { register, login, getProfile } = UserController;
+const { register, login, getProfile, findUserByUserName } = UserController;
 const { 
   create,
   addQuestion,
@@ -32,7 +32,8 @@ route.get('/', (req, res) => res.status(200).json({
   app_name: 'How well do you know me',
 }));
 // validate inputs
-route.get('/user/profile', checkSession, getProfile)
+route.get('/user/profile', checkSession, getProfile);
+route.get('/user/check/:userName', findUserByUserName);
 route.post(
   '/register',
   validateRegister,

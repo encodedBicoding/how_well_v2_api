@@ -1,6 +1,9 @@
 const Promise = require('bluebird');
 const jwt = require('../helpers/jwt');
 const { Users }  = require('../../../models');
+const Sequelize = require('sequelize');
+
+const { Op } = Sequelize;
 
 class UserController {
   static async register(req, res) {
@@ -9,13 +12,13 @@ class UserController {
     return Promise.try(async () => {
       const isFound = await Users.findOne({
         where: {
-          email
+          [Op.or]: { userName, email }
         }
       })
       if(isFound) {
         return res.status(401).json({
           status: 401,
-          error: 'A user with the given email already exists'
+          error: 'A user with the given email or username already exists'
         })
       }
       const SESSION_TOKEN = await jwt.sign({userName, password});

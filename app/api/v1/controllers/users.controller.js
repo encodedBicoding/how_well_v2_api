@@ -102,6 +102,32 @@ class UserController {
       })
     })
   }
+  static async findUserByUserName(req, res) {
+    const { userName } = req.params;
+    return Promise.try(async () => {
+      const isFound = await Users.findOne({
+        where: {
+          userName,
+        },
+      });
+      if (!isFound) {
+        return res.status(404).json({
+          status: 404,
+          error: 'User not found',
+        });
+      }
+      return res.status(200).json({
+        status: 200,
+        data: isFound.getSafeDataValues(),
+      });
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      })
+    })
+  }
 }
 
 module.exports = UserController;

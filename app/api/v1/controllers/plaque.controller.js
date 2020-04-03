@@ -99,6 +99,16 @@ class PlaqueController{
         })
       }
       question = question.trim();
+      answer = answer.trim();
+      const isFound = await Questions.findOne({
+        where: {
+          [Op.and]: {question, plaqueId, userId: user.id}
+        }
+      });
+      if (isFound) return res.status(409).json({
+        status: 409,
+        error: 'Question already exists in plaque',
+      });
       const new_questions = await Questions.create({
         question,
         answer,

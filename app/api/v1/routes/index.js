@@ -8,11 +8,20 @@ const {
   validatePlaqueId,
   validateQuestionId,
   validateAddQuestion,
-  validateCreatePlaque
+  validateCreatePlaque,
+  validateEmail,
+  validatePassword,
+  validateEmailParam,
 } = require('../middlewares/validate');
 
 
-const { register, login, getProfile, findUserByUserName } = UserController;
+const { register,
+        login,
+        getProfile,
+        findUserByUserName,
+        resetPasswordOne,
+        resetPasswordTwo,
+    } = UserController;
 const { 
   create,
   addQuestion,
@@ -88,6 +97,21 @@ route.get(
   '/all/plaque',
   checkSession,
   getAllPlaques
+)
+
+// password reset
+
+route.post(
+  '/otrp/reset/p/',
+  validateEmail,
+  resetPasswordOne,
+)
+
+route.post(
+  '/password/reset/:rt/:email',
+  validateEmailParam,
+  validatePassword,
+  resetPasswordTwo,
 )
 
 

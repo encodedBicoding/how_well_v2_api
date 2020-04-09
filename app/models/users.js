@@ -16,7 +16,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  }, 
+    resetToken: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+    },
+  },
   {
     tableName: 'Users',
     timestamps: true,

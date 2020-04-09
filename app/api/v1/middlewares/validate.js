@@ -70,6 +70,20 @@ const validateQuestionId = [
     return next();
   } 
 ]
+const validateEmailParam = [
+  [
+    param('email')
+      .isEmail()
+      .withMessage('Invalid Email')
+  ],
+  (req, res, next)=> {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+    return next();
+  } 
+]
 const validateAddQuestion = [
   [
     check('question')
@@ -101,6 +115,34 @@ const validateCreatePlaque = [
     return next();
   } 
 ]
+const validatePassword = [
+  [
+  check('password')
+    .isLength({min: 8})
+    .withMessage('Password must be atleast 8 characters long')
+  ],
+  (req, res, next)=> {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+    return next();
+  } 
+]
+const validateEmail =   [
+  [
+  check('email')
+    .isEmail()
+    .withMessage('Please add a valid email'),
+  ],
+  (req, res, next)=> {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+    return next();
+  } 
+];
 
 module.exports = {
   validateRegister,
@@ -108,5 +150,8 @@ module.exports = {
   validatePlaqueId,
   validateQuestionId,
   validateAddQuestion,
-  validateCreatePlaque
+  validateCreatePlaque,
+  validatePassword,
+  validateEmail,
+  validateEmailParam,
 };

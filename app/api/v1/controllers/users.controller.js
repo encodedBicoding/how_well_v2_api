@@ -1,7 +1,9 @@
 const Promise = require('bluebird');
+const bcrypt = require('bcrypt');
 const jwt = require('../helpers/jwt');
 const { Users }  = require('../../../models');
 const Sequelize = require('sequelize');
+const mailer = require('../helpers/mail');
 
 const { Op } = Sequelize;
 
@@ -126,6 +128,108 @@ class UserController {
         status: 500,
         error,
       })
+    })
+  }
+
+  static async resetPasswordOne(req, res) {
+    const { email } = req.body;
+    return Promise.try( async() => {
+      const isUser = await Users.findOne({
+        where: {
+          email,
+        }
+      });
+      if (!isUser) return res.status(404).json({
+        status: 404,
+        error: 'No user with the given email',
+      });
+      const ONE_TIME_RESET_TOKEN = await jwt.sign({email});
+  
+      const FE_BASE_URL='https://hwdykm.xyz';
+      // send mail.
+      const msg = {
+        to: email,
+        from: 'noreply@hwdykm.xyz',
+        subject: 'Password Recovery',
+        html: `
+          <h3>Hello ${isUser.userName.toUpperCase()},</h3>
+          <p>There was a recent request on our servers for a password reset for this email address</p>
+          <p>If you didn't perform this action, please send an email to <a href='mailto:hwdykm2me@gmail.com'>hwdykm2me@gmail.com</a></p>
+          <br/>
+          <h4>Follow the link to reset your password: <a href='${FE_BASE_URL}/rp/${ONE_TIME_RESET_TOKEN}/${email}'>RESET PASSWORD</a></h4>
+        `
+      }
+      await mailer.send(msg);
+
+      await Users.update({
+        resetToken: ONE_TIME_RESET_TOKEN,
+      }, {
+        where: {
+          email,
+        },
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: 'A password reset link has been sent to your email'
+      });
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      });
+    })
+  } 
+
+  static async resetPasswordTwo(req, res) {
+    const { rt, email } = req.params;
+    const { password } = req.body;
+    return Promise.try( async () => {
+      const isUser = await Users.findOne({
+        where: {
+          email,
+        }
+      })
+      if (!isUser) return res.status(404).json({
+        status: 404,
+        error: 'Unfortunately, user does not exist',
+      });
+
+      if (!isUser.resetToken) return res.status(404).json({
+        status: 404,
+        error: 'No reset password request for this account',
+      });
+      let token_in_db = jwt.verify(isUser.resetToken);
+      let token_used = jwt.verify(rt);
+      
+      if (token_used.email !== token_in_db.email) return res.status(409).json({
+        status: 409,
+        error: 'Token is invalid',
+      })
+      const saltRounds = 8;
+      const new_pasword_hashed = await bcrypt.hash(password, saltRounds);
+      console.log(new_pasword_hashed);
+      await Users.update({
+        resetToken: null,
+        password: new_pasword_hashed,
+      },{
+        where: {
+          email: email,
+        }
+      })
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Password reset successfully'
+      })
+
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      });
     })
   }
 }

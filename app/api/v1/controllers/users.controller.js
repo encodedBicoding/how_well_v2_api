@@ -201,8 +201,12 @@ class UserController {
         status: 404,
         error: 'No reset password request for this account',
       });
-      let token_in_db = jwt.verify(isUser.resetToken);
-      let token_used = jwt.verify(rt);
+      let token_used = await jwt.verify(rt);
+      if (!token_used) return res.status(409).json({
+        status: 409,
+        error: 'Token is invalid',
+      })
+      let token_in_db = await jwt.verify(isUser.resetToken);
       
       if (token_used.email !== token_in_db.email) return res.status(409).json({
         status: 409,
@@ -210,7 +214,7 @@ class UserController {
       })
       const saltRounds = 8;
       const new_pasword_hashed = await bcrypt.hash(password, saltRounds);
-      console.log(new_pasword_hashed);
+      
       await Users.update({
         resetToken: null,
         password: new_pasword_hashed,

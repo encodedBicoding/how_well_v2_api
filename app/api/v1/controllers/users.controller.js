@@ -11,6 +11,7 @@ class UserController {
   static async register(req, res) {
     let { userName, email, password } = req.body;
     userName = userName.toLowerCase();
+    email = email.toLowerCase();
     return Promise.try(async () => {
       const isFound = await Users.findOne({
         where: {

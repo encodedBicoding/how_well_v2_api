@@ -40,12 +40,11 @@ class PlaqueController{
             as: 'Questions',
             attributes: {
               exclude: [
-                'plaqueId',
                 'userId',
                 'UserId',
                 'createdAt',
                 'updatedAt',
-                'PlaqueId']
+              ]
             },
             include: [{
               model: Responses,
@@ -128,12 +127,10 @@ class PlaqueController{
       const question_data = await Questions.findByPk(new_questions.id, {
         attributes: {
           exclude: [
-            'plaqueId',
             'userId',
             'UserId',
             'createdAt',
             'updatedAt',
-            'PlaqueId',
           ]
         },
         include: [{
@@ -218,12 +215,11 @@ class PlaqueController{
             as: 'Questions',
             attributes: {
               exclude: [
-                'plaqueId',
                 'userId',
                 'UserId',
                 'createdAt',
                 'updatedAt',
-                'PlaqueId']
+              ]
             },
             include: [{
               model: Responses,
@@ -315,12 +311,11 @@ class PlaqueController{
             as: 'Questions',
             attributes: {
               exclude: [
-                'plaqueId',
                 'userId',
                 'UserId',
                 'createdAt',
                 'updatedAt',
-                'PlaqueId']
+              ]
             },
             include: [{
               model: Responses,
@@ -380,12 +375,11 @@ class PlaqueController{
             as: 'Questions',
             attributes: {
               exclude: [
-                'plaqueId',
                 'userId',
                 'UserId',
                 'createdAt',
                 'updatedAt',
-                'PlaqueId']
+              ]
             },
             include: [{
               model: Responses,
@@ -409,6 +403,181 @@ class PlaqueController{
       })
     })
     .catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      });
+    })
+  }
+
+  static async editQuestion(req, res){
+    const { user } = req.session;
+    const { questionId } = req.params;
+    const { question, answer } = req.body;
+    return Promise.try( async () => {
+      const isQuestion = await Questions.findOne({
+        where: {
+          [Op.and]: {
+            userId: user.id,
+            id: questionId
+          }
+        }
+      });
+      if (!isQuestion) {
+        return res.status(404).json({
+          status: 404,
+          error: 'This question may have been deleted'
+        });
+      }
+
+      await Questions.update({
+        question,
+        answer,
+      }, {
+        where: {
+          id: questionId
+        }
+      })
+
+      const plaqueData = await Plaques.findAll({
+        where: {
+          UserId: user.id,
+        },
+        attributes:{
+          exclude: [
+            'url',
+            'questionLength',
+            'createdAt',
+            'updatedAt',
+            'UserId',
+            'userId']
+        },
+        include:[
+          {
+            model: Questions,
+            as: 'Questions',
+            attributes: {
+              exclude: [
+                'userId',
+                'UserId',
+                'createdAt',
+                'updatedAt',
+              ]
+            },
+            include: [{
+              model: Responses,
+              as: 'Responses',
+              attributes: {
+                exclude: [
+                  'questionId',
+                  'QuestionId',
+                  'createdAt',
+                  'updatedAt'
+                ]
+              }
+            }]
+          }
+        ],
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Question updated successfully',
+        data: plaqueData,
+      });
+
+    }).catch((error) => {
+      return res.status(500).json({
+        status: 500,
+        error,
+      });
+    })
+  }
+
+  static async deleteQuestion(req, res){
+    const { user } = req.session;
+    const { questionId, plaqueId } = req.params;
+    return Promise.try( async () => {
+      const question = await Questions.findOne({
+        where: {
+          [Op.and]: {
+            userId: user.id,
+            id: questionId
+          }
+        }
+      });
+
+      if (!question) {
+        return res.status(404).json({
+          status: 404,
+          error: 'This question may have been deleted'
+        });
+      }
+      await question.destroy();
+      // find the exact plaque and update it accordingly;
+
+      const singlePlaque = await Plaques.findOne({
+        where: {
+          [Op.and]: {userId: user.id, id: plaqueId}
+        }
+      });
+
+      const plaqueQuestionLength = singlePlaque.questionLength - 1;
+      await Plaques.update({
+        questionLength: plaqueQuestionLength,
+      }, {
+        where: {
+          [Op.and]: {userId: user.id, id: plaqueId}
+        }
+      });
+      const plaqueData = await Plaques.findAll({
+        where: {
+          UserId: user.id,
+        },
+        attributes:{
+          exclude: [
+            'url',
+            'questionLength',
+            'createdAt',
+            'updatedAt',
+            'UserId',
+            'userId']
+        },
+        include:[
+          {
+            model: Questions,
+            as: 'Questions',
+            attributes: {
+              exclude: [
+                'userId',
+                'UserId',
+                'createdAt',
+                'updatedAt',
+              ]
+            },
+            include: [{
+              model: Responses,
+              as: 'Responses',
+              attributes: {
+                exclude: [
+                  'questionId',
+                  'QuestionId',
+                  'createdAt',
+                  'updatedAt'
+                ]
+              }
+            }]
+          }
+        ],
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Question deleted successfully',
+        data: plaqueData,
+      });
+
+    }).catch((error) => {
       return res.status(500).json({
         status: 500,
         error,

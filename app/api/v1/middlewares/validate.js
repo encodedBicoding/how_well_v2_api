@@ -70,6 +70,24 @@ const validateQuestionId = [
     return next();
   } 
 ]
+
+const validateDeleteQuestion = [
+  [
+    param('questionId')
+      .isInt()
+      .withMessage('Question ID must have type integer'),
+    param('plaqueId')
+      .isInt()
+      .withMessage('Plaque ID must have type integer'),
+  ],
+  (req, res, next)=> {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+    return next();
+  } 
+]
 const validateEmailParam = [
   [
     param('email')
@@ -154,4 +172,5 @@ module.exports = {
   validatePassword,
   validateEmail,
   validateEmailParam,
+  validateDeleteQuestion,
 };

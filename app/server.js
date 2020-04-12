@@ -19,6 +19,7 @@ app.enable('trust proxy');
 app.use(helmet());
 
 const accepted_urls = [
+  'http://localhost:8083',
   'http://localhost:8080',
   'https://naughty-nobel-33df29.netlify.com',
   'https://hwdykm.xyz'

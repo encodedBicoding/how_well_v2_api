@@ -12,6 +12,7 @@ const {
   validateEmail,
   validatePassword,
   validateEmailParam,
+  validateDeleteQuestion,
 } = require('../middlewares/validate');
 
 
@@ -30,6 +31,8 @@ const {
   getResponses,
   getAllPlaques,
   deleteAPlaque,
+  editQuestion,
+  deleteQuestion,
 } = PlaqueController
 
 const route = express();
@@ -112,6 +115,21 @@ route.post(
   validateEmailParam,
   validatePassword,
   resetPasswordTwo,
+)
+
+route.patch(
+  '/edit/question/:questionId',
+  checkSession,
+  validateQuestionId,
+  validateAddQuestion,
+  editQuestion
+)
+
+route.delete(
+  '/delete/question/:questionId/:plaqueId',
+  checkSession,
+  validateDeleteQuestion,
+  deleteQuestion,
 )
 
 

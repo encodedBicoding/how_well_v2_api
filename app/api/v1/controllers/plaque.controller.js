@@ -79,7 +79,7 @@ class PlaqueController{
   static async addQuestion(req, res) {
     const { user } = req.session;
     const { plaqueId } = req.params;
-    let { question, answer } = req.body;
+    let { question, answer, options } = req.body;
 
     return Promise.try(async ()=> {
       const plaque = await Plaques.findByPk(plaqueId);
@@ -91,14 +91,18 @@ class PlaqueController{
       }
       let questionLength = plaque.questionLength;
 
-      if (questionLength >= 5) {
+      if (questionLength >= 10) {
         return res.status(400).json({
           status: 400,
-          error: 'Cannot add more than 5 questions into a plaque'
+          error: 'Cannot add more than 10 questions into a plaque'
         })
       }
       question = question.trim();
       answer = answer.trim();
+
+      if (options.length > 0) {
+        options = options.map((opt) => opt.trim());
+      }
       const isFound = await Questions.findOne({
         where: {
           [Op.and]: {question, plaqueId, userId: user.id}
@@ -111,6 +115,7 @@ class PlaqueController{
       const new_questions = await Questions.create({
         question,
         answer,
+        options,
         plaqueId: plaque.id,
         userId: user.id,
         PlaqueId: plaque.id,
@@ -162,8 +167,7 @@ class PlaqueController{
 
   static async addResponse(req, res) {
     const { questionId } = req.params;
-    let { response } = req.body;
-
+    let { response, name, school, classInSchool } = req.body;
     return Promise.try(async () => {
       const question = await Questions.findByPk(questionId);
       if (!question) {
@@ -172,9 +176,22 @@ class PlaqueController{
           error: 'Question not found'
         })
       }
+
+      let author = '';
       response = response.trim();
       let noOfResponses = await question.countResponses();
-      let author = `Anonymous user ${Number(noOfResponses + 1)}`;
+      if (!name) {
+        author += `Anonymous user ${Number(noOfResponses + 1)}`;
+      }
+      if (name) {
+        author = `<b>Name</b>: ${name.toUpperCase()}. <br />`;
+        if (school) {
+          author += `<b>School</b>: ${school}. <br />`
+        }
+        if (classInSchool) {
+          author += `<b>Class</b>: ${classInSchool}.`
+        }
+      }
       const new_response = await Responses.create({
         response,
         questionId,
@@ -413,7 +430,7 @@ class PlaqueController{
   static async editQuestion(req, res){
     const { user } = req.session;
     const { questionId } = req.params;
-    const { question, answer } = req.body;
+    let { question, answer, options } = req.body;
     return Promise.try( async () => {
       const isQuestion = await Questions.findOne({
         where: {
@@ -429,10 +446,14 @@ class PlaqueController{
           error: 'This question may have been deleted'
         });
       }
+      if (options.length > 0) {
+        options = options.map((opt) => opt.trim());
+      }
 
       await Questions.update({
         question,
         answer,
+        options,
       }, {
         where: {
           id: questionId

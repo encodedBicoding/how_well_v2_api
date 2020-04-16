@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false, 
     },
+    options: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
     plaqueId: {
       type: DataTypes.INTEGER,
       allowNull: false,

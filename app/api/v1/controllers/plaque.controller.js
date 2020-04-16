@@ -192,7 +192,6 @@ class PlaqueController{
           author += `<b>Class</b>: ${classInSchool}.`
         }
       }
-      console.log('>>>>> got here');
       const new_response = await Responses.create({
         response,
         questionId,

@@ -4,6 +4,7 @@ module.exports = {
     return queryInterface.addColumn('Questions', 'options', {
       type: Sequelize.ARRAY(Sequelize.STRING),
       allowNull: true,
+      defaultValue: [],
     });
   },
   down: (queryInterface, Sequelize) => {

@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     options: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
+      defaultValue: [],
     },
     plaqueId: {
       type: DataTypes.INTEGER,

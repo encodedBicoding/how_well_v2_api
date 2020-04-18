@@ -167,7 +167,7 @@ class PlaqueController{
 
   static async addResponse(req, res) {
     const { questionId } = req.params;
-    let { response, name, school, classInSchool, country, teachersName } = req.body;
+    let { response, name, school, classInSchool, country, teacherName } = req.body;
     return Promise.try(async () => {
       const question = await Questions.findByPk(questionId);
       if (!question) {
@@ -189,13 +189,13 @@ class PlaqueController{
           author += `<b>School</b>: ${school.trim()}. <br />`
         }
         if (classInSchool) {
-          author += `<b>Class</b>: ${classInSchool.trim()}.`
+          author += `<b>Class</b>: ${classInSchool.trim()}.  <br />`
         }
         if (country) {
-          author += `<b>Country</b>: ${country.trim()}.`
+          author += `<b>Country</b>: ${country.trim()}.  <br />`
         }
-        if (teachersName) {
-          author += `<b>Teachers Name</b>: ${teachersName.trim()}.`
+        if (teacherName) {
+          author += `<b>Teacher's Name</b>: ${teacherName.trim()}.`
         }
       }
       const new_response = await Responses.create({

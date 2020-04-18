@@ -91,10 +91,10 @@ class PlaqueController{
       }
       let questionLength = plaque.questionLength;
 
-      if (questionLength >= 10) {
+      if (questionLength >= 15) {
         return res.status(400).json({
           status: 400,
-          error: 'Cannot add more than 10 questions into a plaque'
+          error: 'Cannot add more than 15 questions into a plaque'
         })
       }
       question = question.trim();
@@ -167,7 +167,7 @@ class PlaqueController{
 
   static async addResponse(req, res) {
     const { questionId } = req.params;
-    let { response, name, school, classInSchool } = req.body;
+    let { response, name, school, classInSchool, country, teacherName } = req.body;
     return Promise.try(async () => {
       const question = await Questions.findByPk(questionId);
       if (!question) {
@@ -184,12 +184,18 @@ class PlaqueController{
         author += `Anonymous user ${Number(noOfResponses + 1)}`;
       }
       if (name) {
-        author = `<b>Name</b>: ${name.toUpperCase()}. <br />`;
+        author = `<b>Name</b>: ${name.toUpperCase().trim()}. <br />`;
         if (school) {
-          author += `<b>School</b>: ${school}. <br />`
+          author += `<b>School</b>: ${school.trim()}. <br />`
         }
         if (classInSchool) {
-          author += `<b>Class</b>: ${classInSchool}.`
+          author += `<b>Class</b>: ${classInSchool.trim()}.  <br />`
+        }
+        if (country) {
+          author += `<b>Country</b>: ${country.trim()}.  <br />`
+        }
+        if (teacherName) {
+          author += `<b>Teacher's Name</b>: ${teacherName.trim()}.`
         }
       }
       const new_response = await Responses.create({

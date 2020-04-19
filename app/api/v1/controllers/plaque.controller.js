@@ -79,7 +79,7 @@ class PlaqueController{
   static async addQuestion(req, res) {
     const { user } = req.session;
     const { plaqueId } = req.params;
-    let { question, answer, options } = req.body;
+    let { question, answer, options, showAnswer } = req.body;
 
     return Promise.try(async ()=> {
       const plaque = await Plaques.findByPk(plaqueId);
@@ -116,6 +116,7 @@ class PlaqueController{
         question,
         answer,
         options,
+        showAnswer,
         plaqueId: plaque.id,
         userId: user.id,
         PlaqueId: plaque.id,

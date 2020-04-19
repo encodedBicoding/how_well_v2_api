@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: [],
     },
+    showAnswer: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: true,
+    },
     plaqueId: {
       type: DataTypes.INTEGER,
       allowNull: false,

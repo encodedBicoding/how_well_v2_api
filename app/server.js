@@ -24,7 +24,8 @@ const accepted_urls = [
   'http://localhost:3000',
   'https://fe-hwdykm.herokuapp.com',
   'https://naughty-nobel-33df29.netlify.com',
-  'https://hwdykm.xyz'
+  'https://hwdykm.xyz',
+  'https://www.hwdykm.xyz'
 ];
 const corsOption = {
   origin: (origin, cb) => {

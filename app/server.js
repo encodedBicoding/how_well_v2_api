@@ -21,6 +21,8 @@ app.use(helmet());
 const accepted_urls = [
   'http://localhost:8083',
   'http://localhost:8080',
+  'http://localhost:3000',
+  'https://fe-hwdykm.herokuapp.com',
   'https://naughty-nobel-33df29.netlify.com',
   'https://hwdykm.xyz'
 ];

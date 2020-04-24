@@ -437,7 +437,7 @@ class PlaqueController{
   static async editQuestion(req, res){
     const { user } = req.session;
     const { questionId } = req.params;
-    let { question, answer, options } = req.body;
+    let { question, answer, options, showAnswer } = req.body;
     return Promise.try( async () => {
       const isQuestion = await Questions.findOne({
         where: {
@@ -461,6 +461,7 @@ class PlaqueController{
         question,
         answer,
         options,
+        showAnswer,
       }, {
         where: {
           id: questionId

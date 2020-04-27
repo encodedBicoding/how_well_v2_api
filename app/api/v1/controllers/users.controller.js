@@ -146,7 +146,7 @@ class UserController {
       });
       const ONE_TIME_RESET_TOKEN = await jwt.sign({email});
   
-      const FE_BASE_URL='https://hwdykm.xyz';
+      const FE_BASE_URL='https://www.hwdykm.xyz';
       // send mail.
       const msg = {
         to: email,

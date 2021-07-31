@@ -23,6 +23,7 @@ const accepted_urls = [
   'http://localhost:8080',
   'http://localhost:3000',
   'https://fe-hwdykm.herokuapp.com',
+  'https://fe-hwdykm.herokuapp.com/',
   'https://naughty-nobel-33df29.netlify.com',
   'https://hwdykm.xyz',
   'https://www.hwdykm.xyz',
@@ -31,7 +32,7 @@ const accepted_urls = [
 ];
 const corsOption = {
   origin: (origin, cb) => {
-    if (accepted_urls.indexOf(origin) !== -1) {
+    if (accepted_urls.includes(origin)) {
       return cb(null, true);
     }
     return cb(null, false);
@@ -41,8 +42,8 @@ const corsOption = {
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 const isProduction = app.get('env') === 'production';
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false, limit: '50mb'}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: false, limit: '50mb'}))
 app.use(cors(corsOption));
 if (isProduction) app.use(enforce.HTTPS());
 if (!isProduction) {

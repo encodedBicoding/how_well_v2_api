@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "export NODE_ENV=development && node ./app/server.js",
-    "build": "npm run prestart &&  -d ./build ./app",
-    "prestart": "export NODE_ENV=production && npm run migrate",
+    "build": "npm run prestart && babel -d ./build ./app",
+    "prestart": "export NODE_ENV=production && npm install && npm run migrate",
     "migrate": "npx sequelize-cli db:migrate",
     "migrate:undo": "npx sequelize-cli db:migrate:undo",
     "start": "export NODE_EN=production && node ./build/server.js",

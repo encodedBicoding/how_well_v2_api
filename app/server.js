@@ -29,6 +29,8 @@ const accepted_urls = [
   'https://www.hwdykm.xyz',
   'http://hwdykm.xyz',
   'http://www.hwdykm.xyz',
+  'https://how-well-fe-v2.onrender.com',
+  'https://how-well-fe-v2.onrender.com/'
 ];
 const corsOption = {
   origin: (origin, cb) => {

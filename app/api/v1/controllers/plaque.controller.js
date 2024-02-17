@@ -459,12 +459,11 @@ class PlaqueController{
           .map((opt) => opt.trim())
           .reduce((a, c) => {
           let curr = c.trim().toLowerCase();
-          if(!a.include(curr)) {
+          if(!a.includes(curr)) {
             a.push(curr)
           }
           return a;
         }, []);
-
       }
 
       await Questions.update({

@@ -454,7 +454,17 @@ class PlaqueController{
         });
       }
       if (options.length > 0) {
-        options = options.map((opt) => opt.trim());
+        // remove duplicates.
+        options = options
+          .map((opt) => opt.trim())
+          .reduce((a, c) => {
+          let curr = c.trim().toLowerCase();
+          if(!a.include(curr)) {
+            a.push(curr)
+          }
+          return a;
+        }, []);
+
       }
 
       await Questions.update({

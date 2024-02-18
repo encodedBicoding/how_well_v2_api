@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'Annonymous User'
     },
+    responseStatus: {
+      type: DataTypes.ENUM('correct', 'wrong', 'not_applicable'),
+      allowNull: false,
+      defaultValue: 'not_applicable'
+    }
   },
   {
     tableName: 'Responses',

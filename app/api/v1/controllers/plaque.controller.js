@@ -178,6 +178,7 @@ class PlaqueController{
       country, 
       teacherName, 
       responseStatus,
+      responseId,
     } = req.body;
     return Promise.try(async () => {
       if(!responseStatus) responseStatus = 'not_applicable';
@@ -190,7 +191,7 @@ class PlaqueController{
       }
 
       response = response.trim();
-      const responseToken = await thiz._generateResponseUUID(req, res);
+      const responseToken = await thiz._generateResponseUUID(responseId);
       let author = name ? _.map(name.split(' '), _.capitalize).join(' ') : `User-${responseToken}`;
       // check if question request answer and if the response is correct.
       if(question.showAnswer) {
@@ -213,6 +214,7 @@ class PlaqueController{
         status: 201,
         message: 'Response submitted successfully',
         data: new_response,
+        responseId: responseToken,
       })
     })
     .catch((error) => {
@@ -222,13 +224,11 @@ class PlaqueController{
       })
     })
   }
-  async _generateResponseUUID(req, res) {
-    // lets save this on the user cookie
-    let responseToken = req.cookies['ResponseToken'];
+  async _generateResponseUUID(id) {
+    let responseToken = id || null;
     if(!responseToken) {
       const translator = shortUUID.generate();
       const newToken = translator;
-      res.cookie('ResponseToken',newToken, {expire : 24 * 60 * 60 * 1000 });
       responseToken = newToken
     }
     return responseToken

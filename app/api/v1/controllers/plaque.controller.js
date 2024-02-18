@@ -168,8 +168,9 @@ class PlaqueController{
 
   static async addResponse(req, res) {
     const { questionId } = req.params;
-    let { response, name, school, classInSchool, country, teacherName } = req.body;
+    let { response, name, school, classInSchool, country, teacherName, responseStatus } = req.body;
     return Promise.try(async () => {
+      if(!responseStatus) responseStatus = 'not_applicable';
       const question = await Questions.findByPk(questionId);
       if (!question) {
         return res.status(404).json({
@@ -203,7 +204,8 @@ class PlaqueController{
         response,
         questionId,
         QuestionId: questionId,
-        author
+        author,
+        responseStatus,
       });
 
       return res.status(201).json({

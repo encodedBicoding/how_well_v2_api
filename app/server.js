@@ -9,6 +9,7 @@ const enforce = require('express-sslify');
 const compression = require('compression');
 const errorHandler = require('errorhandler');
 const RouteV1 = require('./api/v1/routes');
+const cookieParser = require('cookie-parser');
 
 config();
 
@@ -16,6 +17,7 @@ config();
 const app = express();
 app.enable('trust proxy');
 
+app.use(cookieParser())
 app.use(helmet());
 
 const accepted_urls = [
@@ -39,6 +41,7 @@ const corsOption = {
     }
     return cb(null, false);
   },
+  credentials: true,
 };
 
 const PORT = parseInt(process.env.PORT, 10) || 4000;

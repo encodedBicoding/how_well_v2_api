@@ -1,6 +1,7 @@
+const shortUUID = require('short-uuid');
 const { Plaques, Questions, Responses } = require('../../../models');
 const Sequelize = require('sequelize');
-
+const _ = require('lodash');
 const { Op } = Sequelize;
 
 class PlaqueController{
@@ -168,7 +169,16 @@ class PlaqueController{
 
   static async addResponse(req, res) {
     const { questionId } = req.params;
-    let { response, name, school, classInSchool, country, teacherName, responseStatus } = req.body;
+    const thiz = new PlaqueController();
+    let { 
+      response, 
+      name, 
+      school, 
+      classInSchool, 
+      country, 
+      teacherName, 
+      responseStatus,
+    } = req.body;
     return Promise.try(async () => {
       if(!responseStatus) responseStatus = 'not_applicable';
       const question = await Questions.findByPk(questionId);
@@ -179,25 +189,16 @@ class PlaqueController{
         })
       }
 
-      let author = '';
       response = response.trim();
-      let noOfResponses = await question.countResponses();
-      if (!name) {
-        author += `Anonymous user ${Number(noOfResponses + 1)}`;
-      }
-      if (name) {
-        author = `<b>Name</b>: ${name.toUpperCase().trim()}. <br />`;
-        if (school) {
-          author += `<b>School</b>: ${school.trim()}. <br />`
-        }
-        if (classInSchool) {
-          author += `<b>Class</b>: ${classInSchool.trim()}.  <br />`
-        }
-        if (country) {
-          author += `<b>Country</b>: ${country.trim()}.  <br />`
-        }
-        if (teacherName) {
-          author += `<b>Teacher's Name</b>: ${teacherName.trim()}.`
+      const responseToken = await thiz._generateResponseUUID(req, res);
+      let author = name ? _.map(name.split(' '), _.capitalize).join(' ') : `User-${responseToken}`;
+      // check if question request answer and if the response is correct.
+      if(question.showAnswer) {
+        const correct = thiz._isResponseCorrect(response, question.answer, question.options.length);
+        if(correct) {
+          responseStatus = 'correct';
+        } else {
+          responseStatus = 'wrong'
         }
       }
       const new_response = await Responses.create({
@@ -220,6 +221,50 @@ class PlaqueController{
         error,
       })
     })
+  }
+  async _generateResponseUUID(req, res) {
+    // lets save this on the user cookie
+    let responseToken = req.cookies['ResponseToken'];
+    if(!responseToken) {
+      const translator = shortUUID.generate();
+      const newToken = translator;
+      res.cookie('ResponseToken',newToken, {expire : 24 * 60 * 60 * 1000 });
+      responseToken = newToken
+    }
+    return responseToken
+  }
+
+  _isResponseCorrect(friendR, quesA, optLen) {
+    let friendResponse = friendR.toLowerCase().trim()
+    const questionAnswer = quesA.toLowerCase()
+    let correct = false
+    if (optLen <= 0) {
+      for (let i = 0; i <= friendResponse.length; i += 1) {
+        if (friendResponse[i] === ' ') {
+          friendResponse = friendResponse.split(' ')
+          break
+        }
+      }
+      if (typeof friendResponse === 'string') {
+        if (questionAnswer.match(friendResponse) !== null) {
+          correct = true
+          return correct
+        }
+        return correct
+      }
+      for (let i = 0; i < friendResponse.length; i += 1) {
+        if (questionAnswer.match(friendResponse[i]) !== null) {
+          correct = true
+          break
+        }
+      }
+      return correct
+    } else {
+      if (questionAnswer === friendResponse) {
+        correct = true
+      }
+      return correct
+    }
   }
 
   static async getPlaque(req, res) {
